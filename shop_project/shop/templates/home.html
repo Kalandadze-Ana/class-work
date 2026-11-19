@@ -1,0 +1,470 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Query Results Dashboard</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f4f6fb;
+            color: #1e293b;
+            padding: 45px 20px;
+        }
+
+        .container {
+            max-width: 1250px;
+            margin: auto;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            color: #172033;
+        }
+
+        .header p {
+            color: #8490a5;
+            margin-top: 9px;
+            font-size: 14px;
+        }
+
+        .header-badge {
+            background: #e9edff;
+            color: #5264df;
+            padding: 11px 18px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        /* Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 24px;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border: 1px solid #edf0f6;
+            border-radius: 18px;
+            padding: 25px;
+            box-shadow: 0 5px 25px rgba(30, 41, 59, 0.035);
+            transition: transform .25s, box-shadow .25s;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(30, 41, 59, 0.08);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding-bottom: 20px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #f0f2f7;
+        }
+
+        .icon {
+            width: 43px;
+            height: 43px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .card-header h2 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #202b40;
+        }
+
+        .card-header small {
+            display: block;
+            color: #9aa4b5;
+            font-size: 11px;
+            margin-top: 5px;
+        }
+
+        /* Different card colors */
+        .purple .icon { background: #f0ebff; color: #7955db; }
+        .blue .icon { background: #e7f1ff; color: #3982e8; }
+        .green .icon { background: #e5f9f0; color: #21a575; }
+        .orange .icon { background: #fff1e4; color: #e68a36; }
+        .pink .icon { background: #ffeaf1; color: #df5c88; }
+        .cyan .icon { background: #e4f8fc; color: #269bb7; }
+        .red .icon { background: #ffeded; color: #df6262; }
+        .yellow .icon { background: #fff8dc; color: #c49b24; }
+
+        /* Result rows */
+        .result-list {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+        }
+
+        .result {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            background: #f8f9fc;
+            border: 1px solid transparent;
+            padding: 13px 15px;
+            border-radius: 10px;
+            font-size: 13px;
+            transition: .2s;
+        }
+
+        .result:hover {
+            background: #f0f2ff;
+            border-color: #e2e5ff;
+        }
+
+        .result-name {
+            font-weight: 600;
+            color: #39465b;
+        }
+
+        .price {
+            color: #20a477;
+            background: #e6f8f0;
+            padding: 6px 11px;
+            border-radius: 7px;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .empty {
+            padding: 25px 10px;
+            text-align: center;
+            color: #a1aabb;
+            font-size: 13px;
+        }
+
+        .footer {
+            text-align: center;
+            color: #a0a9b8;
+            font-size: 12px;
+            margin-top: 40px;
+        }
+
+        /* Responsive */
+        @media (max-width: 750px) {
+            body {
+                padding: 25px 15px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 26px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <header class="header">
+        <div>
+            <h1>Query Results Dashboard</h1>
+            <p>Explore your Django ORM filter results in one place.</p>
+        </div>
+        <div class="header-badge">DATABASE OVERVIEW</div>
+    </header>
+
+    <div class="grid">
+
+        <!-- Products Exact -->
+        <section class="card purple">
+            <div class="card-header">
+                <div class="icon">🎯</div>
+                <div>
+                    <h2>Products Exact</h2>
+                    <small>Exact field matching</small>
+                </div>
+            </div>
+
+            <div class="result-list">
+                {% for p in products_exact %}
+                <div class="result">
+                    <span class="result-name">{{ p.name }}</span>
+                    <span class="price">${{ p.price }}</span>
+                </div>
+                {% empty %}
+                <div class="empty">No matching products found.</div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Customers Contains -->
+        <section class="card blue">
+            <div class="card-header">
+                <div class="icon">👥</div>
+                <div>
+                    <h2>Customers Contains</h2>
+                    <small>Search customers by name</small>
+                </div>
+            </div>
+
+            <div class="result-list">
+                {% for c in customers_contains %}
+                <div class="result">
+                    <span class="result-name">{{ c.first_name }} {{ c.last_name }}</span>
+                    <span>👤</span>
+                </div>
+                {% empty %}
+                <div class="empty">No matching customers found.</div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Products Startswith -->
+        <section class="card green">
+            <div class="card-header">
+                <div class="icon">🔤</div>
+                <div>
+                    <h2>Products Startswith</h2>
+                    <small>Names starting with a specific value</small>
+                </div>
+            </div>
+
+            <div class="result-list">
+                {% for p in products_startswith %}
+                <div class="result">
+                    <span class="result-name">{{ p.name }}</span>
+                    <span>📦</span>
+                </div>
+                {% empty %}
+                <div class="empty">No matching products found.</div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Products Endswith -->
+        <section class="card orange">
+            <div class="card-header">
+                <div class="icon">🔚</div>
+                <div>
+                    <h2>Products Endswith</h2>
+                    <small>Names ending with a specific value</small>
+                </div>
+            </div>
+
+            <div class="result-list">
+                {% for p in products_endswith %}
+                <div class="result">
+                    <span class="result-name">{{ p.name }}</span>
+                    <span>📦</span>
+                </div>
+                {% empty %}
+                <div class="empty">No matching products found.</div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Greater Than -->
+        <section class="card pink">
+            <div class="card-header">
+                <div class="icon">📈</div>
+                <div>
+                    <h2>Price Greater Than 100</h2>
+                    <small>Price &gt; 100</small>
+                </div>
+            </div>
+
+            <div class="result-list">
+                {% for p in products_gt %}
+                <div class="result">
+                    <span class="result-name">{{ p.name }}</span>
+                    <span class="price">${{ p.price }}</span>
+                </div>
+                {% empty %}
+                <div class="empty">No matching products found.</div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Greater Than Equal -->
+        <section class="card cyan">
+            <div class="card-header">
+                <div class="icon">📊</div>
+                <div>
+                    <h2>Price Greater Than or Equal 100</h2>
+                    <small>Price &gt;= 100</small>
+                </div>
+            </div>
+
+            <div class="result-list">
+                {% for p in products_gte %}
+                <div class="result">
+                    <span class="result-name">{{ p.name }}</span>
+                    <span class="price">${{ p.price }}</span>
+                </div>
+                {% empty %}
+                <div class="empty">No matching products found.</div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Less Than -->
+        <section class="card red">
+            <div class="card-header">
+                <div class="icon">📉</div>
+                <div>
+                    <h2>Price Less Than 100</h2>
+                    <small>Price &lt; 100</small>
+                </div>
+            </div>
+
+            <div class="result-list">
+                {% for p in products_lt %}
+                <div class="result">
+                    <span class="result-name">{{ p.name }}</span>
+                    <span class="price">${{ p.price }}</span>
+                </div>
+                {% empty %}
+                <div class="empty">No matching products found.</div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Less Than Equal -->
+        <section class="card yellow">
+            <div class="card-header">
+                <div class="icon">⚖️</div>
+                <div>
+                    <h2>Price Less Than or Equal 100</h2>
+                    <small>Price &lt;= 100</small>
+                </div>
+            </div>
+
+            <div class="result-list">
+                {% for p in products_lte %}
+                <div class="result">
+                    <span class="result-name">{{ p.name }}</span>
+                    <span class="price">${{ p.price }}</span>
+                </div>
+                {% empty %}
+                <div class="empty">No matching products found.</div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Price Range -->
+        <section class="card green">
+            <div class="card-header">
+                <div class="icon">💰</div>
+                <div>
+                    <h2>Price Range 10–50</h2>
+                    <small>Products priced between 10 and 50</small>
+                </div>
+            </div>
+
+            <div class="result-list">
+                {% for p in products_range %}
+                <div class="result">
+                    <span class="result-name">{{ p.name }}</span>
+                    <span class="price">${{ p.price }}</span>
+                </div>
+                {% empty %}
+                <div class="empty">No matching products found.</div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Products ID In -->
+        <section class="card purple">
+            <div class="card-header">
+                <div class="icon">🆔</div>
+                <div>
+                    <h2>Products ID In</h2>
+                    <small>Products matching selected IDs</small>
+                </div>
+            </div>
+
+            <div class="result-list">
+                {% for p in products_in %}
+                <div class="result">
+                    <span class="result-name">{{ p.name }}</span>
+                    <span class="price">${{ p.price }}</span>
+                </div>
+                {% empty %}
+                <div class="empty">No matching products found.</div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Customers Is Null -->
+        <section class="card blue">
+            <div class="card-header">
+                <div class="icon">📭</div>
+                <div>
+                    <h2>Customers Email Is Null</h2>
+                    <small>Customers without an email address</small>
+                </div>
+            </div>
+
+            <div class="result-list">
+                {% for c in customers_isnull %}
+                <div class="result">
+                    <span class="result-name">{{ c.first_name }} {{ c.last_name }}</span>
+                    <span style="color:#e16b6b;font-size:12px;font-weight:600;">No Email</span>
+                </div>
+                {% empty %}
+                <div class="empty">No matching customers found.</div>
+                {% endfor %}
+            </div>
+        </section>
+
+    </div>
+
+    <footer class="footer">
+        Django ORM Query Results · Built with HTML & CSS
+    </footer>
+
+</div>
+
+</body>
+</html>
